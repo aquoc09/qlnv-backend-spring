@@ -5,6 +5,7 @@ import com.kenji.qlnv_backend.dto.request.UserUpdateRequest;
 import com.kenji.qlnv_backend.dto.response.ApiResponse;
 import com.kenji.qlnv_backend.dto.response.UserResponse;
 import com.kenji.qlnv_backend.service.UserService;
+import com.kenji.qlnv_backend.service.UserServiceImp;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

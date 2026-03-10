@@ -25,10 +25,6 @@ public class SecurityConfig {
             "/auth/token", "/auth/login"
     };
 
-    private final String[] WEB_ENDPOINTS = { "/login-page", "/WEB-INF/**", "/js/**",
-            "/css/**",
-    };
-
     @Value("${jwt.signerKey}")
     private String signerKey;
 
@@ -39,7 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request ->
                     request
                             .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                            .requestMatchers(WEB_ENDPOINTS).permitAll()
+                            .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 ->

@@ -9,123 +9,24 @@ import com.kenji.qlnv_backend.entity.User;
 import com.kenji.qlnv_backend.enums.RoleEnum;
 import com.kenji.qlnv_backend.exception.AppException;
 import com.kenji.qlnv_backend.exception.ErrorCode;
-import com.kenji.qlnv_backend.mapper.EmployeeMapper;
-import com.kenji.qlnv_backend.repository.DepartmentRepository;
-import com.kenji.qlnv_backend.repository.EmployeeRepository;
-import com.kenji.qlnv_backend.repository.RoleRepository;
-import com.kenji.qlnv_backend.repository.UserRepository;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import java.util.*;
 
-@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Slf4j
-public class EmployeeService {
-    EmployeeRepository employeeRepository;
-    UserRepository userRepository;
-    DepartmentRepository departmentRepository;
-    RoleRepository roleRepository;
+public interface EmployeeService {
+    public EmployeeResponse create(EmployeeRequest request);
 
-    @Autowired
-    EmployeeMapper employeeMapper;
+    public EmployeeResponse get(Long empId);
 
-    public EmployeeResponse create(EmployeeRequest request) {
+    public EmployeeResponse getMyInfo();
 
-        Employee emp = employeeMapper.toEmployee(request);
-        User user;
+    public List<EmployeeResponse> getAll();
 
-        if (request.getUsername() != null && !request.getUsername().isBlank()) {
-            user = userRepository.findByUsername(request.getUsername())
-                    .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        } else {
-            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-            Set<Role> roles = new HashSet<>();
-            roles.add(roleRepository.findById(RoleEnum.EMPLOYEE.name())
-                    .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED)));
+    public void delete(Long empId);
 
-            user = User.builder()
-                    .username(emp.getEmail())
-                    .password(passwordEncoder.encode(emp.getPayCode()))
-                    .roles(roles)
-                    .build();
-        }
-        emp.setUser(userRepository.save(user));
-
-        if (request.getDepartmentId() != null) {
-            Department dep = departmentRepository.findById(request.getDepartmentId())
-                    .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
-            emp.setDepartment(dep);
-        }
-
-        return employeeMapper.toEmployeeResponse(employeeRepository.save(emp));
-    }
-
-    public EmployeeResponse get(Long empId) {
-        Employee emp = employeeRepository.findById(empId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        return employeeMapper.toEmployeeResponse(emp);
-    }
-
-    @PostAuthorize("returnObject.username == authentication.name")
-    public EmployeeResponse getMyInfo() {
-        var context = SecurityContextHolder.getContext();
-        String name = context.getAuthentication().getName();
-
-        Employee emp = employeeRepository.findByUser_Username(name)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-
-        return employeeMapper.toEmployeeResponse(emp);
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN','HR')")
-    public List<EmployeeResponse> getAll() {
-        List<EmployeeResponse> employeeResponses = new ArrayList<>();
-        employeeRepository.findAll()
-                .forEach(emp -> employeeResponses.add(employeeMapper.toEmployeeResponse(emp)));
-        return employeeResponses;
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN','HR')")
-    public void delete(Long empId) {
-        employeeRepository.deleteById(empId);
-    }
-
-    public EmployeeResponse update(Long empId, EmployeeRequest request) {
-        Employee emp = employeeRepository.findById(empId)
-                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
-
-
-        if (request.getUsername() != null && !request.getUsername().isBlank()) {
-            if (!Objects.equals(emp.getUser().getUsername(), request.getUsername())) {
-                User user = userRepository.findByUsername(request.getUsername())
-                        .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-                emp.setUser(user);
-            }
-        }
-        if (request.getDepartmentId() != null) {
-            if (!Objects.equals(emp.getDepartment().getId(), request.getDepartmentId())) {
-                Department dep = departmentRepository.findById(request.getDepartmentId())
-                        .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
-                emp.setDepartment(dep);
-            }
-        }
-
-        employeeMapper.updateEmployee(emp, request);
-
-        return employeeMapper.toEmployeeResponse(employeeRepository.save(emp));
-
-    }
-
+    public EmployeeResponse update(Long empId, EmployeeRequest request);
 }
