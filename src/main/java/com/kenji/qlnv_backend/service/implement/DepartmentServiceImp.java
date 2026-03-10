@@ -1,4 +1,4 @@
-package com.kenji.qlnv_backend.service;
+package com.kenji.qlnv_backend.service.implement;
 
 import com.kenji.qlnv_backend.dto.request.DepartmentRequest;
 import com.kenji.qlnv_backend.dto.response.DepartmentResponse;
@@ -9,6 +9,7 @@ import com.kenji.qlnv_backend.exception.ErrorCode;
 import com.kenji.qlnv_backend.mapper.DepartmentMapper;
 import com.kenji.qlnv_backend.repository.DepartmentRepository;
 import com.kenji.qlnv_backend.repository.EmployeeRepository;
+import com.kenji.qlnv_backend.service.DepartmentService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,7 +26,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class DepartmentServiceImp implements DepartmentService{
+public class DepartmentServiceImp implements DepartmentService {
     DepartmentRepository departmentRepository;
     EmployeeRepository employeeRepository;
 

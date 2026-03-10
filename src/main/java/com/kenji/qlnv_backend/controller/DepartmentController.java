@@ -4,7 +4,6 @@ import com.kenji.qlnv_backend.dto.request.DepartmentRequest;
 import com.kenji.qlnv_backend.dto.response.ApiResponse;
 import com.kenji.qlnv_backend.dto.response.DepartmentResponse;
 import com.kenji.qlnv_backend.service.DepartmentService;
-import com.kenji.qlnv_backend.service.DepartmentServiceImp;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

@@ -21,8 +21,14 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS = {"/users",
-            "/auth/token", "/auth/login"
+    private final String[] PUBLIC_ENDPOINTS = {"/users/**", "/users",
+            "/auth/**"
+    };
+    private final String[] PUBLIC_ENDPOINTS_FOR_ADMIN = {"/users/**", "/users",
+            "/auth/**", "/departments/**", "/departments", "/leaves/**", "/leaves", "/roles/**", "/roles"
+    };
+    private final String[] PUBLIC_ENDPOINTS_FOR_EMPLOYEE = {"/users/**", "/users",
+            "/auth/**", "/leaves/**", "/leaves", "/roles/**", "/roles"
     };
 
     @Value("${jwt.signerKey}")
@@ -36,6 +42,8 @@ public class SecurityConfig {
                     request
                             .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                             .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS).permitAll()
+                            .requestMatchers(HttpMethod.PUT, PUBLIC_ENDPOINTS).permitAll()
+                            .requestMatchers(HttpMethod.DELETE, PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest().authenticated());
 
         httpSecurity.oauth2ResourceServer(oauth2 ->

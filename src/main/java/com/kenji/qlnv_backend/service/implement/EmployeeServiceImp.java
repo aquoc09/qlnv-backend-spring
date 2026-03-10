@@ -1,4 +1,4 @@
-package com.kenji.qlnv_backend.service;
+package com.kenji.qlnv_backend.service.implement;
 
 import com.kenji.qlnv_backend.dto.request.EmployeeRequest;
 import com.kenji.qlnv_backend.dto.response.EmployeeResponse;
@@ -14,6 +14,7 @@ import com.kenji.qlnv_backend.repository.DepartmentRepository;
 import com.kenji.qlnv_backend.repository.EmployeeRepository;
 import com.kenji.qlnv_backend.repository.RoleRepository;
 import com.kenji.qlnv_backend.repository.UserRepository;
+import com.kenji.qlnv_backend.service.EmployeeService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

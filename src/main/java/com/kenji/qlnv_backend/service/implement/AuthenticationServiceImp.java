@@ -1,4 +1,4 @@
-package com.kenji.qlnv_backend.service;
+package com.kenji.qlnv_backend.service.implement;
 
 import com.kenji.qlnv_backend.dto.request.AuthenticationRequest;
 import com.kenji.qlnv_backend.dto.request.TokenRequest;
@@ -8,6 +8,7 @@ import com.kenji.qlnv_backend.entity.User;
 import com.kenji.qlnv_backend.exception.AppException;
 import com.kenji.qlnv_backend.exception.ErrorCode;
 import com.kenji.qlnv_backend.repository.UserRepository;
+import com.kenji.qlnv_backend.service.AuthenticationService;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -36,7 +37,7 @@ import java.util.StringJoiner;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class AuthenticationServiceImp implements AuthenticationService{
+public class AuthenticationServiceImp implements AuthenticationService {
     UserRepository userRepository;
 
     @NonFinal

@@ -1,4 +1,4 @@
-package com.kenji.qlnv_backend.service;
+package com.kenji.qlnv_backend.service.implement;
 
 import com.kenji.qlnv_backend.dto.request.UserCreationRequest;
 import com.kenji.qlnv_backend.dto.request.UserUpdateRequest;
@@ -11,13 +11,13 @@ import com.kenji.qlnv_backend.exception.ErrorCode;
 import com.kenji.qlnv_backend.mapper.UserMapper;
 import com.kenji.qlnv_backend.repository.RoleRepository;
 import com.kenji.qlnv_backend.repository.UserRepository;
+import com.kenji.qlnv_backend.service.UserService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +33,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class UserServiceImp implements UserService{
+public class UserServiceImp implements UserService {
     UserRepository userRepository;
 
     @Autowired

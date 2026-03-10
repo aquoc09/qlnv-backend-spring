@@ -4,7 +4,6 @@ import com.kenji.qlnv_backend.dto.request.RoleRequest;
 import com.kenji.qlnv_backend.dto.response.ApiResponse;
 import com.kenji.qlnv_backend.dto.response.RoleResponse;
 import com.kenji.qlnv_backend.service.RoleService;
-import com.kenji.qlnv_backend.service.RoleServiceImp;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

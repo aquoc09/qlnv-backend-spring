@@ -1,4 +1,4 @@
-package com.kenji.qlnv_backend.service;
+package com.kenji.qlnv_backend.service.implement;
 
 import com.kenji.qlnv_backend.dto.request.RoleRequest;
 import com.kenji.qlnv_backend.dto.response.RoleResponse;
@@ -7,6 +7,7 @@ import com.kenji.qlnv_backend.exception.AppException;
 import com.kenji.qlnv_backend.exception.ErrorCode;
 import com.kenji.qlnv_backend.mapper.RoleMapper;
 import com.kenji.qlnv_backend.repository.RoleRepository;
+import com.kenji.qlnv_backend.service.RoleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
-public class RoleServiceImp implements RoleService{
+public class RoleServiceImp implements RoleService {
     RoleRepository roleRepository;
 
     @Autowired

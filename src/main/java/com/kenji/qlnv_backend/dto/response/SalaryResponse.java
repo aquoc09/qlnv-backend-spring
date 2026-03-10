@@ -1,49 +1,27 @@
-package com.kenji.qlnv_backend.entity;
+package com.kenji.qlnv_backend.dto.response;
+
 import com.kenji.qlnv_backend.enums.SalaryStatus;
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalTime;
 
-@Entity
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Salary {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class SalaryResponse {
     Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "employee_id")
-    Employee employee;
-
+    EmployeeResponse employee;
     Integer month;
-
     Integer year;
-
-    @Column(name = "base_salary")
     BigDecimal baseSalary;
-
     BigDecimal allowance;
-
     BigDecimal bonus;
-
     BigDecimal deduction;
-
-    @Column(name = "net_salary")
     BigDecimal netSalary;
-
-    @Column(name = "payment_date")
     LocalDate paymentDate;
-
-    @Enumerated(EnumType.STRING)
     SalaryStatus status;
 }
