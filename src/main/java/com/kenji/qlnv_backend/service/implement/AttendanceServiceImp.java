@@ -87,7 +87,7 @@ public class AttendanceServiceImp implements AttendanceService {
                 .checkIn(nowTime)
                 .workDate(today)
                 .employee(emp)
-                .isCheckOut(false)
+                .isCheckedOut(false)
                 .status(isLate ? AttendanceStatus.CHECK_IN_LATE : AttendanceStatus.CHECK_IN_ON_TIME)
                 .build();
 
@@ -105,7 +105,7 @@ public class AttendanceServiceImp implements AttendanceService {
         Attendance attendance = attendanceRepository.findByEmployeeAndWorkDate(emp, today)
                 .orElseThrow(() -> new AppException(ErrorCode.ATTENDANCE_NOT_EXISTED));
 
-        if (attendance.isCheckOut())
+        if (attendance.isCheckedOut())
             throw new AppException(ErrorCode.ATTENDANCE_CHECKED_OUT);
         if (!today.equals(attendance.getWorkDate()))
             throw new AppException(ErrorCode.ATTENDANCE_INVALID_DAY);
@@ -113,7 +113,7 @@ public class AttendanceServiceImp implements AttendanceService {
             attendance.setStatus(AttendanceStatus.CHECK_OUT_EARLY);
 
         attendance.setCheckOut(nowTime);
-        attendance.setCheckOut(true);
+        attendance.setCheckedOut(true);
         int timeWorked = Math.toIntExact(
                 Duration.between(attendance.getCheckIn(), attendance.getCheckOut())
                         .toHours());
@@ -129,7 +129,7 @@ public class AttendanceServiceImp implements AttendanceService {
         List<Attendance> attendances = attendanceRepository.findAllByEmployee(employee);
         int sum = 0;
         for (Attendance attendance : attendances) {
-            if (attendance.isCheckOut()) {
+            if (attendance.isCheckedOut()) {
                 sum += attendance.getTimeWorked();
             }
         }
@@ -143,7 +143,7 @@ public class AttendanceServiceImp implements AttendanceService {
         List<Attendance> attendances = attendanceRepository.findAllByEmployee(employee);
         int count = 0;
         for (Attendance attendance : attendances) {
-            if (attendance.isCheckOut() && attendance.getStatus().equals(AttendanceStatus.CHECK_IN_LATE)) {
+            if (attendance.isCheckedOut() && attendance.getStatus().equals(AttendanceStatus.CHECK_IN_LATE)) {
                 count++;
             }
         }

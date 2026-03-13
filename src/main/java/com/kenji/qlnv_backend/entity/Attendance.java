@@ -37,8 +37,8 @@ public class Attendance {
     @Enumerated(EnumType.STRING)
     AttendanceStatus status;
 
-    @Column(name = "is_check_out")
-    boolean isCheckOut;
+    @Column(name = "is_checked_out")
+    boolean isCheckedOut;
 
     @Column(name = "time_worked")
     int timeWorked;
