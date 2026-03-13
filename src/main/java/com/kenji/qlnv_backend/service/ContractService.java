@@ -14,5 +14,7 @@ public interface ContractService {
 
     public void delete(Long id);
 
+    public List<ContractResponse> getListAlmostExpiredContract(Long id);
+
     public ContractResponse update(Long id, ContractRequest request);
 }

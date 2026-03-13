@@ -63,6 +63,11 @@ public class ContractServiceImp implements ContractService {
     }
 
     @Override
+    public List<ContractResponse> getListAlmostExpiredContract(Long id) {
+        return List.of();
+    }
+
+    @Override
     public ContractResponse update(Long id, ContractRequest request) {
         Contract contract = contractRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CONTRACT_NOT_EXISTED));

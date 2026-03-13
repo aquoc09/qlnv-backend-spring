@@ -5,6 +5,7 @@ import com.kenji.qlnv_backend.dto.response.LeaveRecordResponse;
 import com.kenji.qlnv_backend.entity.Employee;
 import com.kenji.qlnv_backend.entity.Leave;
 import com.kenji.qlnv_backend.entity.LeaveRecord;
+import com.kenji.qlnv_backend.enums.LeaveStatus;
 import com.kenji.qlnv_backend.exception.AppException;
 import com.kenji.qlnv_backend.exception.ErrorCode;
 import com.kenji.qlnv_backend.mapper.LeaveRecordMapper;
@@ -47,6 +48,8 @@ public class LeaveRecordServiceImp implements LeaveRecordService {
                     .orElseThrow(() -> new AppException(ErrorCode.LEAVE_NOT_EXISTED));
             leaveRecord.setLeave(leave);
         }
+
+        leaveRecord.setStatus(LeaveStatus.PENDING);
 
         return leaveRecordMapper.toLeaveRecordResponse(leaveRecordRepository.save(leaveRecord));
     }

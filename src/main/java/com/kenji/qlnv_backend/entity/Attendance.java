@@ -1,5 +1,6 @@
 package com.kenji.qlnv_backend.entity;
 
+import com.kenji.qlnv_backend.enums.AttendanceStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -33,5 +34,12 @@ public class Attendance {
     @Column(name = "check_out")
     LocalTime checkOut;
 
-    String status;
+    @Enumerated(EnumType.STRING)
+    AttendanceStatus status;
+
+    @Column(name = "is_check_out")
+    boolean isCheckOut;
+
+    @Column(name = "time_worked")
+    int timeWorked;
 }

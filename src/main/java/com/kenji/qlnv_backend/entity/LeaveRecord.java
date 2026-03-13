@@ -1,5 +1,6 @@
 package com.kenji.qlnv_backend.entity;
 
+import com.kenji.qlnv_backend.enums.LeaveStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -36,5 +37,6 @@ public class LeaveRecord {
 
     String reason;
 
-    String status;
+    @Enumerated(EnumType.STRING)
+    LeaveStatus status;
 }

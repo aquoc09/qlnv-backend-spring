@@ -31,13 +31,17 @@ public enum ErrorCode {
 
     DEPARTMENT_NOT_EXISTED(5001, "Department not existed", HttpStatus.NOT_FOUND),
 
-    ATTENDANCE_NOT_EXISTED(5100, "Attendance not existed", HttpStatus.NOT_FOUND ),
+    ATTENDANCE_NOT_EXISTED(5100, "Attendance is not existed", HttpStatus.NOT_FOUND),
+    ATTENDANCE_INVALID_DAY(5101, "Attendance's day is invalid day", HttpStatus.BAD_REQUEST),
+    ATTENDANCE_CHECKED_OUT(5102, "Attendance has already checked out", HttpStatus.BAD_REQUEST),
 
     CONTRACT_NOT_EXISTED(5200, "Contract not existed", HttpStatus.NOT_FOUND ),
     LEAVE_NOT_EXISTED(5300, "Leave not existed", HttpStatus.NOT_FOUND ),
     SALARY_NOT_EXISTED(5400, "Salary not existed", HttpStatus.NOT_FOUND ),
     REWARD_DISCIPLINE_NOT_EXISTED(5500, "Reward discipline not existed", HttpStatus.NOT_FOUND ),
-    LEAVE_RECORD_NOT_EXISTED(5600, "Leave record not existed", HttpStatus.NOT_FOUND );
+    LEAVE_RECORD_NOT_EXISTED(5600, "Leave record not existed", HttpStatus.NOT_FOUND ),
+
+    ;
 
     ErrorCode(int code, String message, HttpStatus status) {
         this.code = code;

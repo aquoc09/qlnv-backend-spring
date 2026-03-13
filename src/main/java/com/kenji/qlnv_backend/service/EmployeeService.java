@@ -22,7 +22,12 @@ public interface EmployeeService {
 
     public EmployeeResponse get(Long empId);
 
+    @PreAuthorize("isAuthenticated()")
     public EmployeeResponse getMyInfo();
+
+    public List<EmployeeResponse> getEmployeeByName(String name);
+
+    public List<EmployeeResponse> getEmployeeByDepartment(Long depId);
 
     public List<EmployeeResponse> getAll();
 

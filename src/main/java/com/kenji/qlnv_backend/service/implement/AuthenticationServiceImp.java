@@ -4,9 +4,11 @@ import com.kenji.qlnv_backend.dto.request.AuthenticationRequest;
 import com.kenji.qlnv_backend.dto.request.TokenRequest;
 import com.kenji.qlnv_backend.dto.response.AuthenticationResponse;
 import com.kenji.qlnv_backend.dto.response.IntrospectResponse;
+import com.kenji.qlnv_backend.entity.Token;
 import com.kenji.qlnv_backend.entity.User;
 import com.kenji.qlnv_backend.exception.AppException;
 import com.kenji.qlnv_backend.exception.ErrorCode;
+import com.kenji.qlnv_backend.repository.TokenRepository;
 import com.kenji.qlnv_backend.repository.UserRepository;
 import com.kenji.qlnv_backend.service.AuthenticationService;
 import com.nimbusds.jose.*;
@@ -29,6 +31,9 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
@@ -39,10 +44,19 @@ import java.util.StringJoiner;
 @Slf4j
 public class AuthenticationServiceImp implements AuthenticationService {
     UserRepository userRepository;
+    TokenRepository tokenRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
     String SIGNER_KEY;
+
+    @NonFinal
+    @Value("${jwt.valid-duration}")
+    protected long VALID_DURATION;
+
+    @NonFinal
+    @Value("${jwt.refreshable-duration}")
+    protected long REFRESHABLE_DURATION;
 
     public IntrospectResponse introspect(TokenRequest request){
         var token = request.getToken();
@@ -107,6 +121,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
         String token = generateToken(user);
 
+
+
         return AuthenticationResponse.builder()
                 .token(token)
                 .authenticated(true)
@@ -140,6 +156,46 @@ public class AuthenticationServiceImp implements AuthenticationService {
             log.error("Can't create jwt token");
             throw new RuntimeException(e);
         }
+    }
+
+    private SignedJWT verifyToken(String token, boolean isRefresh) throws JOSEException, ParseException, AppException {
+
+        JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes());
+
+        SignedJWT signedJWT = SignedJWT.parse(token);
+
+        Date expiryTime = (isRefresh)
+                ? new Date(signedJWT
+                .getJWTClaimsSet()
+                .getIssueTime().toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.MINUTES)
+                .toEpochMilli())
+                : signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        var verified = signedJWT.verify(verifier);
+
+        if (!verified || expiryTime.before(new Date())){
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+        }
+
+        return signedJWT;
+    }
+
+    private Token getEntityTokenFromStringToken(String token) throws ParseException, JOSEException {
+        var signedJWT = verifyToken(token, false);
+        String refreshToken = signedJWT.getJWTClaimsSet().getClaim("refreshToken").toString();
+        String username = signedJWT.getJWTClaimsSet().getSubject().toString();
+        Date expiredTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+        LocalDateTime expirationDateTime = expiredTime.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        String jwtId = signedJWT.getJWTClaimsSet().getJWTID();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        return Token.builder()
+                .jwtId(jwtId)
+                .expirationTime(expirationDateTime)
+                .refreshToken(refreshToken)
+                .user(user)
+                .build();
     }
 
     @Override

@@ -28,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -88,6 +89,24 @@ public class EmployeeServiceImp implements EmployeeService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         return employeeMapper.toEmployeeResponse(emp);
+    }
+
+    @Override
+    public List<EmployeeResponse> getEmployeeByName(String name) {
+        List<Employee> employees = employeeRepository.findByEmpName(name);
+        return employees.stream()
+                .map(employeeMapper::toEmployeeResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EmployeeResponse> getEmployeeByDepartment(Long depId) {
+        Department dep = departmentRepository.findById(depId)
+                .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
+        List<Employee> employees = employeeRepository.findByDepartment(dep);
+        return employees.stream()
+                .map(employeeMapper::toEmployeeResponse)
+                .collect(Collectors.toList());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','HR')")
