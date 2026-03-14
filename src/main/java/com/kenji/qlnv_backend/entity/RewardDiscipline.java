@@ -1,4 +1,5 @@
 package com.kenji.qlnv_backend.entity;
+import com.kenji.qlnv_backend.enums.RewardDisciplineType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,7 +26,8 @@ public class RewardDiscipline {
     @JoinColumn(name = "employee_id")
     Employee employee;
 
-    String type;
+    @Enumerated(EnumType.STRING)
+    RewardDisciplineType type;
 
     String reason;
 

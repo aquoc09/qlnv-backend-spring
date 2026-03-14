@@ -4,14 +4,18 @@ import com.kenji.qlnv_backend.dto.request.AttendanceRequest;
 import com.kenji.qlnv_backend.dto.response.AttendanceResponse;
 import com.kenji.qlnv_backend.entity.Attendance;
 import com.kenji.qlnv_backend.entity.Employee;
+import com.kenji.qlnv_backend.entity.RewardDiscipline;
 import com.kenji.qlnv_backend.entity.User;
 import com.kenji.qlnv_backend.enums.AttendanceStatus;
+import com.kenji.qlnv_backend.enums.PenaltyAmount;
+import com.kenji.qlnv_backend.enums.RewardDisciplineType;
 import com.kenji.qlnv_backend.enums.WorkingTime;
 import com.kenji.qlnv_backend.exception.AppException;
 import com.kenji.qlnv_backend.exception.ErrorCode;
 import com.kenji.qlnv_backend.mapper.AttendanceMapper;
 import com.kenji.qlnv_backend.repository.AttendanceRepository;
 import com.kenji.qlnv_backend.repository.EmployeeRepository;
+import com.kenji.qlnv_backend.repository.RewardDisciplineRepository;
 import com.kenji.qlnv_backend.service.AttendanceService;
 import com.kenji.qlnv_backend.util.UserUtil;
 import lombok.AccessLevel;
@@ -20,6 +24,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -34,6 +39,7 @@ import java.util.Objects;
 public class AttendanceServiceImp implements AttendanceService {
     AttendanceRepository attendanceRepository;
     EmployeeRepository employeeRepository;
+    RewardDisciplineRepository rewardDisciplineRepository;
     AttendanceMapper attendanceMapper;
 
     @Override
@@ -83,6 +89,17 @@ public class AttendanceServiceImp implements AttendanceService {
 
         boolean isLate = isCheckInLate(nowTime, WorkingTime.CHECK_IN.getTime());
 
+        if(isLate){
+            RewardDiscipline rewardDiscipline = RewardDiscipline.builder()
+                    .type(RewardDisciplineType.PENALTY)
+                    .amount(BigDecimal.valueOf(PenaltyAmount.CHECK_IN_LATE.getGross()))
+                    .employee(emp)
+                    .reason("Check in late")
+                    .decisionDate(today)
+                    .build();
+            rewardDisciplineRepository.save(rewardDiscipline);
+        }
+
         Attendance attendance = Attendance.builder()
                 .checkIn(nowTime)
                 .workDate(today)
@@ -109,8 +126,17 @@ public class AttendanceServiceImp implements AttendanceService {
             throw new AppException(ErrorCode.ATTENDANCE_CHECKED_OUT);
         if (!today.equals(attendance.getWorkDate()))
             throw new AppException(ErrorCode.ATTENDANCE_INVALID_DAY);
-        if (isCheckOutEarly(nowTime, WorkingTime.CHECK_OUT.getTime()))
+        if (isCheckOutEarly(nowTime, WorkingTime.CHECK_OUT.getTime())){
             attendance.setStatus(AttendanceStatus.CHECK_OUT_EARLY);
+            RewardDiscipline rewardDiscipline = RewardDiscipline.builder()
+                    .type(RewardDisciplineType.PENALTY)
+                    .amount(BigDecimal.valueOf(PenaltyAmount.CHECK_OUT_EARLY.getGross()))
+                    .employee(emp)
+                    .reason("Check out early")
+                    .decisionDate(today)
+                    .build();
+            rewardDisciplineRepository.save(rewardDiscipline);
+        }
 
         attendance.setCheckOut(nowTime);
         attendance.setCheckedOut(true);

@@ -2,11 +2,13 @@ package com.kenji.qlnv_backend.service.implement;
 
 import com.kenji.qlnv_backend.dto.request.SalaryRequest;
 import com.kenji.qlnv_backend.dto.response.SalaryResponse;
+import com.kenji.qlnv_backend.entity.Attendance;
 import com.kenji.qlnv_backend.entity.Employee;
 import com.kenji.qlnv_backend.entity.Salary;
 import com.kenji.qlnv_backend.exception.AppException;
 import com.kenji.qlnv_backend.exception.ErrorCode;
 import com.kenji.qlnv_backend.mapper.SalaryMapper;
+import com.kenji.qlnv_backend.repository.AttendanceRepository;
 import com.kenji.qlnv_backend.repository.EmployeeRepository;
 import com.kenji.qlnv_backend.repository.SalaryRepository;
 import com.kenji.qlnv_backend.service.SalaryService;
@@ -27,6 +29,7 @@ import java.util.Objects;
 public class SalaryServiceImp implements SalaryService {
     SalaryRepository salaryRepository;
     EmployeeRepository employeeRepository;
+    AttendanceRepository attendanceRepository;
     SalaryMapper salaryMapper;
 
     @Override
@@ -79,5 +82,22 @@ public class SalaryServiceImp implements SalaryService {
         salaryMapper.updateSalary(salary, request);
 
         return salaryMapper.toSalaryResponse(salaryRepository.save(salary));
+    }
+
+    @Override
+    public SalaryResponse calculateSalaryByEmployee(Long empId) {
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+
+        List<Attendance> attendances = attendanceRepository.findAllByEmployee(employee);
+
+
+
+        return null;
+    }
+
+    @Override
+    public SalaryResponse calculateSalaryByMonth(int month, int year) {
+        return null;
     }
 }

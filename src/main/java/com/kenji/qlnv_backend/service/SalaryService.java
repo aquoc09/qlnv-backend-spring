@@ -3,6 +3,7 @@ package com.kenji.qlnv_backend.service;
 import com.kenji.qlnv_backend.dto.request.SalaryRequest;
 import com.kenji.qlnv_backend.dto.response.SalaryResponse;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface SalaryService {
@@ -15,4 +16,8 @@ public interface SalaryService {
     public void delete(Long id);
 
     public SalaryResponse update(Long id, SalaryRequest request);
+
+    public SalaryResponse calculateSalaryByEmployee(Long empId);
+
+    public SalaryResponse calculateSalaryByMonth(int month, int year);
 }
