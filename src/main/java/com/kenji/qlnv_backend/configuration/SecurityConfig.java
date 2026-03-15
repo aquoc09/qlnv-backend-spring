@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(request ->
                     request
-                            .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS_AUTH).permitAll()
+                            .requestMatchers(PUBLIC_ENDPOINTS_AUTH).permitAll()
                             .requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS_USER).permitAll()
                         .anyRequest().authenticated());
 
@@ -79,7 +79,7 @@ public class SecurityConfig {
     @Bean
     public CorsFilter corsFilter(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://qlnv-frontend-react-nine.vercel.app/");
+        configuration.addAllowedOrigin("https://qlnv-frontend-react-nine.vercel.app");
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
