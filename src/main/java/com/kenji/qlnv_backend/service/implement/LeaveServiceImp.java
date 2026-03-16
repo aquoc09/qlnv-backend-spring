@@ -2,7 +2,10 @@ package com.kenji.qlnv_backend.service.implement;
 
 import com.kenji.qlnv_backend.dto.request.LeaveRequest;
 import com.kenji.qlnv_backend.dto.response.LeaveResponse;
+import com.kenji.qlnv_backend.entity.Employee;
 import com.kenji.qlnv_backend.entity.Leave;
+import com.kenji.qlnv_backend.entity.LeaveRecord;
+import com.kenji.qlnv_backend.enums.LeaveStatus;
 import com.kenji.qlnv_backend.exception.AppException;
 import com.kenji.qlnv_backend.exception.ErrorCode;
 import com.kenji.qlnv_backend.mapper.LeaveMapper;
@@ -14,6 +17,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 

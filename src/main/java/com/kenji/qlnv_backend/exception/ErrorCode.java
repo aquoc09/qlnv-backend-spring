@@ -41,6 +41,9 @@ public enum ErrorCode {
     REWARD_DISCIPLINE_NOT_EXISTED(5500, "Reward discipline not existed", HttpStatus.NOT_FOUND ),
     LEAVE_RECORD_NOT_EXISTED(5600, "Leave record not existed", HttpStatus.NOT_FOUND ),
 
+    LEAVE_BALANCE_NOT_EXISTED(5700, "Leave balance is not existed", HttpStatus.NOT_FOUND ),
+    LEAVE_RECORD_OVER_TOTAL_DAYS(5701, "Num of day off has over total days", HttpStatus.BAD_REQUEST ),
+
     ;
 
     ErrorCode(int code, String message, HttpStatus status) {

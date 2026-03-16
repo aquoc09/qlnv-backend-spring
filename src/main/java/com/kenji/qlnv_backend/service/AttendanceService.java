@@ -2,6 +2,8 @@ package com.kenji.qlnv_backend.service;
 
 import com.kenji.qlnv_backend.dto.request.AttendanceRequest;
 import com.kenji.qlnv_backend.dto.response.AttendanceResponse;
+import com.kenji.qlnv_backend.entity.Attendance;
+import com.kenji.qlnv_backend.entity.Employee;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.time.LocalDate;
@@ -28,6 +30,8 @@ public interface AttendanceService {
     public List<AttendanceResponse> findAllByEmployee(Long empId);
 
     public List<AttendanceResponse> findAllByDate(LocalDate date);
+
+    public List<Attendance> findAllByEmployeeAndMonthYear(Employee employee, int month, int year);
 
     public void delete(Long id);
 

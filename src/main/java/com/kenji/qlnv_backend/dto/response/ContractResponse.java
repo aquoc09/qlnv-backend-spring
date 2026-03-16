@@ -1,5 +1,7 @@
 package com.kenji.qlnv_backend.dto.response;
 
+import com.kenji.qlnv_backend.enums.ContractStatus;
+import com.kenji.qlnv_backend.enums.ContractType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,9 +17,9 @@ public class ContractResponse {
     Long id;
     EmployeeResponse employee;
     String contractNumber;
-    String contractType;
+    ContractType contractType;
     LocalDate startDate;
     LocalDate endDate;
     BigDecimal baseSalary;
-    String status;
+    ContractStatus status;
 }

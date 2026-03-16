@@ -12,4 +12,7 @@ public class LeaveRequest {
     String leaveName;
     String description;
     Integer defaultDays;
+    Boolean paid;
+    Boolean requireDoc;
+    Boolean active;
 }

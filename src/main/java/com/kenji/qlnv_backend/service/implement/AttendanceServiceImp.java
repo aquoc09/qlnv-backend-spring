@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -71,12 +72,12 @@ public class AttendanceServiceImp implements AttendanceService {
         return responses;
     }
 
-    private boolean isCheckInLate(LocalTime checkIn, LocalTime time) {
-        return time.isAfter(checkIn.plusMinutes(15));
+    private boolean isCheckInLate(LocalTime scheduledCheckIn, LocalTime actualTime) {
+        return actualTime.isAfter(scheduledCheckIn.plusMinutes(15));
     }
 
-    private boolean isCheckOutEarly(LocalTime checkOut, LocalTime time) {
-        return time.isBefore(checkOut.minusMinutes(15));
+    private boolean isCheckOutEarly(LocalTime scheduledCheckOut, LocalTime actualTime) {
+        return actualTime.isBefore(scheduledCheckOut.minusMinutes(15));
     }
 
     @Override
@@ -188,6 +189,15 @@ public class AttendanceServiceImp implements AttendanceService {
     public List<AttendanceResponse> findAllByDate(LocalDate date) {
         List<Attendance> attendances = attendanceRepository.findAllByWorkDate(date);
         return attendances.stream().map(attendanceMapper::toAttendanceResponse).toList();
+    }
+
+    @Override
+    public List<Attendance> findAllByEmployeeAndMonthYear(Employee employee, int month, int year) {
+        YearMonth yearMonth = YearMonth.of(year, month);
+        LocalDate startDate = yearMonth.atDay(1);
+        LocalDate endDate = yearMonth.atEndOfMonth();
+
+        return attendanceRepository.findByEmployeeAndMonth(employee, startDate, endDate);
     }
 
     @Override

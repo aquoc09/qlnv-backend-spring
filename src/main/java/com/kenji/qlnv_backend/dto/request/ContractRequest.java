@@ -1,5 +1,7 @@
 package com.kenji.qlnv_backend.dto.request;
 
+import com.kenji.qlnv_backend.enums.ContractStatus;
+import com.kenji.qlnv_backend.enums.ContractType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,9 +16,9 @@ import java.time.LocalDate;
 public class ContractRequest {
     Long employeeId;
     String contractNumber;
-    String contractType;
+    ContractType contractType;
     LocalDate startDate;
     LocalDate endDate;
     BigDecimal baseSalary;
-    String status;
+    ContractStatus status;
 }

@@ -27,4 +27,11 @@ public class Leave {
 
     @Column(name = "default_days")
     Integer defaultDays;
+
+    boolean paid;
+
+    @Column(name = "require_doc")
+    boolean requireDoc;
+
+    boolean active;
 }

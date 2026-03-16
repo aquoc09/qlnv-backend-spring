@@ -1,5 +1,8 @@
 package com.kenji.qlnv_backend.entity;
 
+import com.kenji.qlnv_backend.enums.ContractLevel;
+import com.kenji.qlnv_backend.enums.ContractStatus;
+import com.kenji.qlnv_backend.enums.ContractType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -21,7 +24,7 @@ public class Contract {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "employee_id", nullable = false)
     Employee employee;
 
@@ -29,7 +32,12 @@ public class Contract {
     String contractNumber;
 
     @Column(name = "contract_type")
-    String contractType;
+    @Enumerated(EnumType.STRING)
+    ContractType contractType;
+
+    @Column(name = "contract_level")
+    @Enumerated(EnumType.STRING)
+    ContractLevel contractLevel;
 
     @Column(name = "start_date")
     LocalDate startDate;
@@ -40,5 +48,6 @@ public class Contract {
     @Column(name = "base_salary")
     BigDecimal baseSalary;
 
-    String status;
+    @Enumerated(EnumType.STRING)
+    ContractStatus status;
 }

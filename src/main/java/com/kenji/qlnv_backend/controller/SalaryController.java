@@ -44,6 +44,21 @@ public class SalaryController {
                 .build();
     }
 
+    @GetMapping("/employee/{empId}/calculate")
+    ApiResponse<SalaryResponse> calculateSalaryByEmployee(@PathVariable Long empId) {
+        return ApiResponse.<SalaryResponse>builder()
+                .result(salaryService.calculateSalaryByEmployee(empId))
+                .build();
+    }
+
+    @PostMapping("/calculate")
+    ApiResponse<List<SalaryResponse>> calculateSalaryByMonth(@RequestParam int month,
+                                                             @RequestParam int year) {
+        return ApiResponse.<List<SalaryResponse>>builder()
+                .result(salaryService.calculateSalaryByMonth(month, year))
+                .build();
+    }
+
     @DeleteMapping("/{id}")
     ApiResponse<String> delete(@PathVariable Long id) {
         salaryService.delete(id);

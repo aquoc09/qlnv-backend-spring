@@ -2,6 +2,8 @@ package com.kenji.qlnv_backend.service;
 
 import com.kenji.qlnv_backend.dto.request.LeaveRequest;
 import com.kenji.qlnv_backend.dto.response.LeaveResponse;
+import com.kenji.qlnv_backend.entity.Employee;
+import com.kenji.qlnv_backend.entity.LeaveRecord;
 
 import java.util.List;
 

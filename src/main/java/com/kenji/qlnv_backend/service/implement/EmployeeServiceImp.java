@@ -2,18 +2,12 @@ package com.kenji.qlnv_backend.service.implement;
 
 import com.kenji.qlnv_backend.dto.request.EmployeeRequest;
 import com.kenji.qlnv_backend.dto.response.EmployeeResponse;
-import com.kenji.qlnv_backend.entity.Department;
-import com.kenji.qlnv_backend.entity.Employee;
-import com.kenji.qlnv_backend.entity.Role;
-import com.kenji.qlnv_backend.entity.User;
+import com.kenji.qlnv_backend.entity.*;
 import com.kenji.qlnv_backend.enums.RoleEnum;
 import com.kenji.qlnv_backend.exception.AppException;
 import com.kenji.qlnv_backend.exception.ErrorCode;
 import com.kenji.qlnv_backend.mapper.EmployeeMapper;
-import com.kenji.qlnv_backend.repository.DepartmentRepository;
-import com.kenji.qlnv_backend.repository.EmployeeRepository;
-import com.kenji.qlnv_backend.repository.RoleRepository;
-import com.kenji.qlnv_backend.repository.UserRepository;
+import com.kenji.qlnv_backend.repository.*;
 import com.kenji.qlnv_backend.service.EmployeeService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +31,7 @@ import java.util.stream.Collectors;
 public class EmployeeServiceImp implements EmployeeService {
     EmployeeRepository employeeRepository;
     UserRepository userRepository;
+    LeaveBalanceRepository leaveBalanceRepository;
     DepartmentRepository departmentRepository;
     RoleRepository roleRepository;
 
@@ -59,7 +54,7 @@ public class EmployeeServiceImp implements EmployeeService {
 
             user = User.builder()
                     .username(emp.getEmail())
-                    .password(passwordEncoder.encode(emp.getPayCode()))
+                    .password(passwordEncoder.encode(emp.getEmail()))
                     .roles(roles)
                     .build();
         }
@@ -71,7 +66,16 @@ public class EmployeeServiceImp implements EmployeeService {
             emp.setDepartment(dep);
         }
 
-        return employeeMapper.toEmployeeResponse(employeeRepository.save(emp));
+        Employee empSave = employeeRepository.save(emp);
+
+        LeaveBalance leaveBalance = LeaveBalance.builder()
+                .employee(emp)
+                .usedDays(0)
+                .year(Calendar.getInstance().get(Calendar.YEAR))
+                .build();
+        leaveBalanceRepository.save(leaveBalance);
+
+        return employeeMapper.toEmployeeResponse(empSave);
     }
 
     public EmployeeResponse get(Long empId) {

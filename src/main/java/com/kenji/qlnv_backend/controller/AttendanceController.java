@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -45,6 +46,57 @@ public class AttendanceController {
                 .build();
     }
 
+    @PostMapping("/check-in")
+    ApiResponse<AttendanceResponse> checkIn() {
+        return ApiResponse.<AttendanceResponse>builder()
+                .result(attendanceService.checkIn())
+                .build();
+    }
+
+    @PostMapping("/check-out")
+    ApiResponse<AttendanceResponse> checkOut() {
+        return ApiResponse.<AttendanceResponse>builder()
+                .result(attendanceService.checkOut())
+                .build();
+    }
+
+    @GetMapping("/employee/{empId}")
+    List<ApiResponse<AttendanceResponse>> getAllByEmployee(@PathVariable Long empId) {
+        List<ApiResponse<AttendanceResponse>> apiResponses = new ArrayList<>();
+        attendanceService.findAllByEmployee(empId).forEach(attendanceResponse -> apiResponses.add(
+                ApiResponse.<AttendanceResponse>builder()
+                        .result(attendanceResponse)
+                        .build()));
+        return apiResponses;
+    }
+
+    @GetMapping("/date")
+    List<ApiResponse<AttendanceResponse>> getAllByDate(
+            @RequestParam("workDate")
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate workDate
+    ) {
+        List<ApiResponse<AttendanceResponse>> apiResponses = new ArrayList<>();
+        attendanceService.findAllByDate(workDate).forEach(attendanceResponse -> apiResponses.add(
+                ApiResponse.<AttendanceResponse>builder()
+                        .result(attendanceResponse)
+                        .build()));
+        return apiResponses;
+    }
+
+    @GetMapping("/employee/{empId}/working-time")
+    ApiResponse<Integer> getSumWorkingTimeOfEmployee(@PathVariable Long empId) {
+        return ApiResponse.<Integer>builder()
+                .result(attendanceService.getSumWorkingTimeOfEmployee(empId))
+                .build();
+    }
+
+    @GetMapping("/employee/{empId}/check-in-late/count")
+    ApiResponse<Integer> getCountCheckInLateOfEmployee(@PathVariable Long empId) {
+        return ApiResponse.<Integer>builder()
+                .result(attendanceService.getCountCheckInLateOfEmployee(empId))
+                .build();
+    }
+
     @DeleteMapping("/{id}")
     ApiResponse<String> delete(@PathVariable Long id) {
         attendanceService.delete(id);
@@ -59,71 +111,5 @@ public class AttendanceController {
         return ApiResponse.<AttendanceResponse>builder()
                 .result(attendanceService.update(id, request))
                 .build();
-    }
-
-    // CHECK IN
-    @PostMapping("/check-in")
-    public ApiResponse<AttendanceResponse> checkIn() {
-        return ApiResponse.<AttendanceResponse>builder()
-                .result(attendanceService.checkIn())
-                .build();
-    }
-
-    // CHECK OUT
-    @PostMapping("/check-out")
-    public ApiResponse<AttendanceResponse> checkOut() {
-        return ApiResponse.<AttendanceResponse>builder()
-                .result(attendanceService.checkOut())
-                .build();
-    }
-
-    // TỔNG THỜI GIAN LÀM VIỆC CỦA NHÂN VIÊN
-    @GetMapping("/employee/{empId}/total-working-time")
-    public ApiResponse<Integer> getSumWorkingTimeOfEmployee(
-            @PathVariable Long empId) {
-        return ApiResponse.<Integer>builder()
-                .result(attendanceService.getSumWorkingTimeOfEmployee(empId))
-                .build();
-    }
-
-    // SỐ LẦN ĐI TRỄ
-    @GetMapping("/employee/{empId}/late-count")
-    public ApiResponse<Integer> getCountCheckInLateOfEmployee(
-            @PathVariable Long empId) {
-        return ApiResponse.<Integer>builder()
-                .result(attendanceService.getCountCheckInLateOfEmployee(empId))
-                .build();
-    }
-
-    // DANH SÁCH CHẤM CÔNG THEO NHÂN VIÊN
-    @GetMapping("/employee/{empId}")
-    public List<ApiResponse<AttendanceResponse>> findAllByEmployee(
-            @PathVariable Long empId) {
-        List<ApiResponse<AttendanceResponse>> responses = new ArrayList<>();
-        attendanceService.findAllByEmployee(empId)
-                .forEach(attendance ->
-                        responses.add(
-                                ApiResponse.<AttendanceResponse>builder()
-                                        .result(attendance)
-                                        .build()
-                        )
-                );
-        return responses;
-    }
-
-    // DANH SÁCH CHẤM CÔNG THEO NGÀY
-    @GetMapping("/date")
-    public List<ApiResponse<AttendanceResponse>> findAllByDate(
-            @RequestParam LocalDate date) {
-        List<ApiResponse<AttendanceResponse>> responses = new ArrayList<>();
-        attendanceService.findAllByDate(date)
-                .forEach(attendance ->
-                        responses.add(
-                                ApiResponse.<AttendanceResponse>builder()
-                                        .result(attendance)
-                                        .build()
-                        )
-                );
-        return responses;
     }
 }

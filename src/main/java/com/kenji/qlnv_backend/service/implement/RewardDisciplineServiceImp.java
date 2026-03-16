@@ -4,6 +4,7 @@ import com.kenji.qlnv_backend.dto.request.RewardDisciplineRequest;
 import com.kenji.qlnv_backend.dto.response.RewardDisciplineResponse;
 import com.kenji.qlnv_backend.entity.Employee;
 import com.kenji.qlnv_backend.entity.RewardDiscipline;
+import com.kenji.qlnv_backend.enums.RewardDisciplineType;
 import com.kenji.qlnv_backend.exception.AppException;
 import com.kenji.qlnv_backend.exception.ErrorCode;
 import com.kenji.qlnv_backend.mapper.RewardDisciplineMapper;
@@ -16,6 +17,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +63,14 @@ public class RewardDisciplineServiceImp implements RewardDisciplineService {
     }
 
     @Override
+    public List<RewardDisciplineResponse> getAllByDate(LocalDate date) {
+        List<RewardDisciplineResponse> responses = new ArrayList<>();
+        rewardDisciplineRepository.findAllByDecisionDate(date)
+                .forEach(item -> responses.add(rewardDisciplineMapper.toRewardDisciplineResponse(item)));
+        return responses;
+    }
+
+    @Override
     public void delete(Long id) {
         rewardDisciplineRepository.deleteById(id);
     }
@@ -82,6 +93,38 @@ public class RewardDisciplineServiceImp implements RewardDisciplineService {
 
         return rewardDisciplineMapper.toRewardDisciplineResponse(
                 rewardDisciplineRepository.save(rewardDiscipline)
+        );
+    }
+
+    @Override
+    public List<RewardDiscipline> getAllRewardByEmployeeAndYearAndMonth(Long empId, int year, int month) {
+        YearMonth ym = YearMonth.of(year, month);
+        LocalDate start = ym.atDay(1);
+        LocalDate end = ym.atEndOfMonth();
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+
+        return rewardDisciplineRepository.findByEmployeeAndTypeAndMonth(
+                employee,
+                RewardDisciplineType.REWARD,
+                start,
+                end
+        );
+    }
+
+    @Override
+    public List<RewardDiscipline> getAllDisciplineByEmployeeAndYearAndMonth(Long empId, int year, int month) {
+        YearMonth ym = YearMonth.of(year, month);
+        LocalDate start = ym.atDay(1);
+        LocalDate end = ym.atEndOfMonth();
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+
+        return rewardDisciplineRepository.findByEmployeeAndTypeAndMonth(
+                employee,
+                RewardDisciplineType.PENALTY,
+                start,
+                end
         );
     }
 }

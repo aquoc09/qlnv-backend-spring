@@ -8,12 +8,10 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LeaveResponse {
+public class LeaveBalanceResponse {
     Long id;
-    String leaveName;
-    String description;
-    Integer defaultDays;
-    Boolean paid;
-    Boolean requireDoc;
-    Boolean active;
+    Long employeeId;
+    Integer year;
+    Integer totalDays;
+    Integer usedDays;
 }

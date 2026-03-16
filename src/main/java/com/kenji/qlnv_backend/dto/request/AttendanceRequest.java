@@ -1,5 +1,6 @@
 package com.kenji.qlnv_backend.dto.request;
 
+import com.kenji.qlnv_backend.enums.AttendanceStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -16,5 +17,5 @@ public class AttendanceRequest {
     LocalDate workDate;
     LocalTime checkIn;
     LocalTime checkOut;
-    String status;
+    AttendanceStatus status;
 }

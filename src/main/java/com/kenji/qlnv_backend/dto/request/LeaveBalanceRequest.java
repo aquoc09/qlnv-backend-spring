@@ -1,21 +1,21 @@
 package com.kenji.qlnv_backend.dto.request;
 
-import com.kenji.qlnv_backend.enums.LeaveStatus;
+import jakarta.validation.constraints.Min;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LeaveRecordRequest {
+public class LeaveBalanceRequest {
+    @NonNull
     Long employeeId;
-    Long leaveId;
-    LocalDate startDate;
-    LocalDate endDate;
-    String reason;
-    LeaveStatus status;
+    @Min(2020)
+    Integer year;
+    @Min(12)
+    Integer totalDays;
+    @Min(0)
+    Integer usedDays;
 }

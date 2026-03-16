@@ -1,5 +1,6 @@
 package com.kenji.qlnv_backend.dto.response;
 
+import com.kenji.qlnv_backend.enums.RewardDisciplineType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,7 +15,7 @@ import java.time.LocalDate;
 public class RewardDisciplineResponse {
     Long id;
     EmployeeResponse employee;
-    String type;
+    RewardDisciplineType type;
     String reason;
     BigDecimal amount;
     LocalDate decisionDate;

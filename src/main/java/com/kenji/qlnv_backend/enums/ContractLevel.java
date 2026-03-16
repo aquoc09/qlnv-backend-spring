@@ -1,6 +1,6 @@
 package com.kenji.qlnv_backend.enums;
 
-public enum SalaryByLevel {
+public enum ContractLevel {
     LVL_1(10000000),
     LVL_2(12500000),
     LVL_3(17000000),
@@ -8,7 +8,7 @@ public enum SalaryByLevel {
 
     private final double gross;
 
-    SalaryByLevel(double gross) {this.gross = gross;}
+    ContractLevel(double gross) {this.gross = gross;}
 
     public double getGross(){
         return this.gross;

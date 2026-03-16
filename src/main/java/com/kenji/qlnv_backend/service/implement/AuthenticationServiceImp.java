@@ -17,6 +17,7 @@ import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
+import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
@@ -37,6 +38,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -107,7 +109,7 @@ public class AuthenticationServiceImp implements AuthenticationService {
         }
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request){
+    public AuthenticationResponse authenticate(AuthenticationRequest request) throws ParseException, JOSEException {
         var user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
@@ -121,6 +123,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
         String token = generateToken(user);
 
+        Token tokenEntity = getEntityTokenFromStringToken(token);
+        tokenRepository.save(tokenEntity);
 
 
         return AuthenticationResponse.builder()
@@ -139,8 +143,10 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getUsername())
+                .jwtID(UUID.randomUUID().toString())
                 .issuer("com.kenji")
                 .issueTime(new Date())
+                .claim("refreshToken", UUID.randomUUID().toString())
                 .expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
                 .claim("scope",buildScope(user))
                 .build();
