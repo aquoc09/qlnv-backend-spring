@@ -38,4 +38,18 @@ public class AuthenticationController {
                 .build();
     }
 
+    @PostMapping("/log-out")
+    public ApiResponse<Boolean> logOut(@RequestBody TokenRequest request) throws ParseException, JOSEException {
+        return ApiResponse.<Boolean>builder()
+                .result(authenticationService.logout(request))
+                .build();
+    }
+
+    @PostMapping("/refresh-token")
+    public ApiResponse<AuthenticationResponse> refreshToken(@RequestBody TokenRequest request) throws ParseException, JOSEException {
+        return ApiResponse.<AuthenticationResponse>builder()
+                .result(authenticationService.refreshToken(request))
+                .build();
+    }
+
 }

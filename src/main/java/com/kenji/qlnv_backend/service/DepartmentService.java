@@ -13,12 +13,18 @@ import java.util.List;
 import java.util.Objects;
 
 public interface DepartmentService {
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     public DepartmentResponse create(DepartmentRequest request);
 
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     public DepartmentResponse get(Long depId);
+
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     public List<DepartmentResponse> getAll();
 
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     public void delete(Long empId);
 
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     public DepartmentResponse update(Long depId, DepartmentRequest request);
 }

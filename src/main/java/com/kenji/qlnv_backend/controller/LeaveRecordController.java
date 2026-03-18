@@ -44,6 +44,16 @@ public class LeaveRecordController {
                 .build();
     }
 
+    @GetMapping("/employee/{empId}")
+    List<ApiResponse<LeaveRecordResponse>> getAllByEmployee(@PathVariable Long empId) {
+        List<ApiResponse<LeaveRecordResponse>> apiResponses = new ArrayList<>();
+        leaveRecordService.getAllByEmployee(empId).forEach(leaveRecordResponse -> apiResponses.add(
+                ApiResponse.<LeaveRecordResponse>builder()
+                        .result(leaveRecordResponse)
+                        .build()));
+        return apiResponses;
+    }
+
     @DeleteMapping("/{id}")
     ApiResponse<String> delete(@PathVariable Long id) {
         leaveRecordService.delete(id);

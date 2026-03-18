@@ -16,12 +16,15 @@ import com.kenji.qlnv_backend.mapper.AttendanceMapper;
 import com.kenji.qlnv_backend.repository.AttendanceRepository;
 import com.kenji.qlnv_backend.repository.EmployeeRepository;
 import com.kenji.qlnv_backend.repository.RewardDisciplineRepository;
+import com.kenji.qlnv_backend.repository.UserRepository;
 import com.kenji.qlnv_backend.service.AttendanceService;
 import com.kenji.qlnv_backend.util.UserUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -40,6 +43,7 @@ import java.util.Objects;
 public class AttendanceServiceImp implements AttendanceService {
     AttendanceRepository attendanceRepository;
     EmployeeRepository employeeRepository;
+    UserRepository userRepository;
     RewardDisciplineRepository rewardDisciplineRepository;
     AttendanceMapper attendanceMapper;
 
@@ -80,11 +84,21 @@ public class AttendanceServiceImp implements AttendanceService {
         return actualTime.isBefore(scheduledCheckOut.minusMinutes(15));
     }
 
+    @PreAuthorize("isAuthenticated()")
+    public User getCurrentUser(){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        return userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    }
+
     @Override
+    @PreAuthorize("isAuthenticated()")
     public AttendanceResponse checkIn() {
         LocalDate today = LocalDate.now();
         LocalTime nowTime = LocalTime.now();
-        User user = UserUtil.getCurrentUser();
+        User user = getCurrentUser();
         Employee emp = employeeRepository.findByUser(user)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
 
@@ -116,7 +130,7 @@ public class AttendanceServiceImp implements AttendanceService {
     public AttendanceResponse checkOut() {
         LocalDate today = LocalDate.now();
         LocalTime nowTime = LocalTime.now();
-        User user = UserUtil.getCurrentUser();
+        User user = getCurrentUser();
         Employee emp = employeeRepository.findByUser(user)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
 

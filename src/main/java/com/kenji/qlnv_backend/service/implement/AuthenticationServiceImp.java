@@ -134,8 +134,16 @@ public class AuthenticationServiceImp implements AuthenticationService {
     }
 
     @Override
-    public void logout(TokenRequest request) throws ParseException, JOSEException {
-
+    public boolean logout(TokenRequest request) throws ParseException, JOSEException {
+        try {
+            Token requestToken = getEntityTokenFromStringToken(request.getToken());
+            Token currentToken = tokenRepository.findByJwtId(requestToken.getJwtId()).get();
+            tokenRepository.delete(currentToken);
+            return true;
+        } catch (AppException e) {
+            log.info("Token already expired");
+            return false;
+        }
     }
 
     public String generateToken(User user){
@@ -206,7 +214,30 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     @Override
     public AuthenticationResponse refreshToken(TokenRequest request) throws ParseException, JOSEException {
-        return null;
+
+        var signedJWT = verifyToken(request.getToken(), true);
+        var issueTime = signedJWT.getJWTClaimsSet().getIssueTime().toInstant();
+        var refreshableTime = new Date(issueTime.plus(REFRESHABLE_DURATION, ChronoUnit.MINUTES).toEpochMilli());
+        var jwtId = signedJWT.getJWTClaimsSet().getJWTID();
+
+        var username = signedJWT.getJWTClaimsSet().getSubject();
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+
+        if(refreshableTime.before(new Date())){
+            throw new AppException(ErrorCode.TOKEN_EXPIRED);
+        }
+
+        String newToken = generateToken(user);
+        Token entityToken = getEntityTokenFromStringToken(newToken);
+
+        tokenRepository.deleteByJwtId(jwtId);
+        tokenRepository.save(entityToken);
+
+        return AuthenticationResponse.builder()
+                .token(newToken)
+                .authenticated(true)
+                .build();
     }
 
     @Override

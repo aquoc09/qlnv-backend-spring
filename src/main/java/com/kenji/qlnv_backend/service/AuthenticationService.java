@@ -15,7 +15,7 @@ public interface AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) throws ParseException, JOSEException;
 
-    public void logout(TokenRequest request) throws ParseException, JOSEException;
+    public boolean logout(TokenRequest request) throws ParseException, JOSEException;
 
     public String generateToken(User user);
 

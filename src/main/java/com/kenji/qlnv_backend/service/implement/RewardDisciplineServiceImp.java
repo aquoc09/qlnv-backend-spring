@@ -71,6 +71,17 @@ public class RewardDisciplineServiceImp implements RewardDisciplineService {
     }
 
     @Override
+    public List<RewardDisciplineResponse> getAllByEmployee(Long empId) {
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+        List<RewardDisciplineResponse> responses = new ArrayList<>();
+        rewardDisciplineRepository.findAllByEmployee(employee)
+                .forEach(item ->
+                        responses.add(rewardDisciplineMapper.toRewardDisciplineResponse(item)));
+        return responses;
+    }
+
+    @Override
     public void delete(Long id) {
         rewardDisciplineRepository.deleteById(id);
     }

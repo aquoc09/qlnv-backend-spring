@@ -77,6 +77,17 @@ public class LeaveRecordServiceImp implements LeaveRecordService {
     }
 
     @Override
+    public List<LeaveRecordResponse> getAllByEmployee(Long empId) {
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+        List<LeaveRecordResponse> responses = new ArrayList<>();
+        leaveRecordRepository.findAllByEmployee(employee)
+                .forEach(record
+                        -> responses.add(leaveRecordMapper.toLeaveRecordResponse(record)));
+        return responses;
+    }
+
+    @Override
     public void delete(Long id) {
         leaveRecordRepository.deleteById(id);
     }

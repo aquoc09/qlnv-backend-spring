@@ -19,14 +19,17 @@ import java.util.List;
 import java.util.Set;
 
 public interface UserService {
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     public UserResponse create(UserCreationRequest request);
 
     public UserResponse get(Long userId);
 
     public UserResponse getMyInfo();
 
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     public List<UserResponse> getAll();
 
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     public void deleteUser(Long userId);
 
     public UserResponse update(Long userId, UserUpdateRequest request);

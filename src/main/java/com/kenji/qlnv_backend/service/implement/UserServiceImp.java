@@ -56,6 +56,13 @@ public class UserServiceImp implements UserService {
                     roleRepository.findById(RoleEnum.EMPLOYEE.name())
                             .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED)));
             user.setRoles(roles);
+        }else{
+            Set<Role> roles = new HashSet<>();
+            for (RoleEnum role : request.getRoles()){
+                roles.add(roleRepository.findById(role.name())
+                        .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED)));
+            }
+            user.setRoles(roles);
         }
 
         return userMapper.toUserResponse(userRepository.save(user));

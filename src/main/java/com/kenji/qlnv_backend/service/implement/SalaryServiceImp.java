@@ -73,6 +73,16 @@ public class SalaryServiceImp implements SalaryService {
     }
 
     @Override
+    public List<SalaryResponse> findAllByEmployee(Long empId) {
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+        List<SalaryResponse> responses = new ArrayList<>();
+        salaryRepository.findAllByEmployee(employee)
+                .forEach(salary -> responses.add(salaryMapper.toSalaryResponse(salary)));
+        return responses;
+    }
+
+    @Override
     public SalaryResponse update(Long id, SalaryRequest request) {
         Salary salary = salaryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.SALARY_NOT_EXISTED));

@@ -29,11 +29,14 @@ public interface AttendanceService {
 
     public List<AttendanceResponse> findAllByEmployee(Long empId);
 
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     public List<AttendanceResponse> findAllByDate(LocalDate date);
 
     public List<Attendance> findAllByEmployeeAndMonthYear(Employee employee, int month, int year);
 
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     public void delete(Long id);
 
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
     public AttendanceResponse update(Long id, AttendanceRequest request);
 }

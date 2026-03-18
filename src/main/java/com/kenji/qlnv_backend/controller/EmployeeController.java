@@ -58,4 +58,31 @@ public class EmployeeController {
                 .result(employeeService.update(empId, request))
                 .build();
     }
+
+    @GetMapping("/find-name")
+    List<ApiResponse<EmployeeResponse>> getAllByName(@RequestParam String name){
+        List<ApiResponse<EmployeeResponse>> apiResponses = new ArrayList<>();
+        employeeService.getAllEmployeesByName(name).forEach(employeeResponse -> apiResponses.add(
+                ApiResponse.<EmployeeResponse>builder()
+                        .result(employeeResponse)
+                        .build()));
+        return apiResponses;
+    }
+
+    @GetMapping("/find-departments/{depId}")
+    List<ApiResponse<EmployeeResponse>> getAllByDepartment(@PathVariable Long depId){
+        List<ApiResponse<EmployeeResponse>> apiResponses = new ArrayList<>();
+        employeeService.getAllEmployeesByDepartment(depId).forEach(employeeResponse -> apiResponses.add(
+                ApiResponse.<EmployeeResponse>builder()
+                        .result(employeeResponse)
+                        .build()));
+        return apiResponses;
+    }
+
+    @GetMapping("/my-info")
+    ApiResponse<EmployeeResponse> getCurrentEmployeeInfo(){
+        return ApiResponse.<EmployeeResponse>builder()
+                .result(employeeService.getCurrentEmployee())
+                .build();
+    }
 }

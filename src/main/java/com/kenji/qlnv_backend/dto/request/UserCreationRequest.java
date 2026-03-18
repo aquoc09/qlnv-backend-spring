@@ -1,6 +1,7 @@
 package com.kenji.qlnv_backend.dto.request;
 
 import com.kenji.qlnv_backend.entity.Role;
+import com.kenji.qlnv_backend.enums.RoleEnum;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -21,5 +22,5 @@ public class UserCreationRequest {
 
 //    //OneToMany to Role
 //    @OneToMany
-    Set<Role> roles;
+    Set<RoleEnum> roles;
 }

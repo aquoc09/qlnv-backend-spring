@@ -61,6 +61,17 @@ public class RewardDisciplineController {
                 .build();
     }
 
+    @GetMapping("/employee/{id}")
+    List<ApiResponse<RewardDisciplineResponse>> getByAllEmployee(@PathVariable Long empId) {
+        List<ApiResponse<RewardDisciplineResponse>> apiResponses = new ArrayList<>();
+        rewardDisciplineService.getAllByEmployee(empId).forEach(response -> apiResponses.add(
+                ApiResponse.<RewardDisciplineResponse>builder()
+                        .result(response)
+                        .build()
+        ));
+        return apiResponses;
+    }
+
     @PutMapping("/{id}")
     ApiResponse<RewardDisciplineResponse> update(@PathVariable Long id,
                                                  @Valid @RequestBody RewardDisciplineRequest request) {

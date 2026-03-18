@@ -4,9 +4,7 @@ import com.kenji.qlnv_backend.dto.request.DepartmentRequest;
 import com.kenji.qlnv_backend.dto.response.DepartmentResponse;
 import com.kenji.qlnv_backend.entity.Department;
 import com.kenji.qlnv_backend.entity.Employee;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 import java.util.List;
 
@@ -20,6 +18,7 @@ public interface DepartmentMapper {
 
     @Mapping(target = "manager", ignore = true)
     @Mapping(target = "employees", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateDepartment(@MappingTarget Department dep, DepartmentRequest request);
 
 //    // mapping employees

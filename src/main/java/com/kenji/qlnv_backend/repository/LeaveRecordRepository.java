@@ -13,6 +13,9 @@ import java.util.List;
 
 @Repository
 public interface LeaveRecordRepository extends JpaRepository<LeaveRecord, Long> {
+
+    List<LeaveRecord> findAllByEmployee(Employee employee);
+
     @Query("""
         SELECT lr
         FROM LeaveRecord lr
@@ -25,6 +28,18 @@ public interface LeaveRecordRepository extends JpaRepository<LeaveRecord, Long> 
     List<LeaveRecord> findAcceptedLeaveInMonth(
             @Param("employee") Employee employee,
             @Param("status") LeaveStatus status,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    @Query("""
+        SELECT lr
+        FROM LeaveRecord lr
+        WHERE lr.startDate <= :endDate
+          AND lr.endDate >= :startDate
+        ORDER BY lr.startDate
+    """)
+    List<LeaveRecord> findAllByDateRange(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );

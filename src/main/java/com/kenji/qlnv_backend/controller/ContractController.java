@@ -59,4 +59,14 @@ public class ContractController {
                 .result(contractService.update(id, request))
                 .build();
     }
+
+//    @GetMapping("/almost-expired")
+//    List<ApiResponse<ContractResponse>> getAllAlmostExpired() {
+//        List<ApiResponse<ContractResponse>> apiResponses = new ArrayList<>();
+//        contractService.getAll().forEach(contractResponse -> apiResponses.add(
+//                ApiResponse.<ContractResponse>builder()
+//                        .result(contractResponse)
+//                        .build()));
+//        return apiResponses;
+//    }
 }

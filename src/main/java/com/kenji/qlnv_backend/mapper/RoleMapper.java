@@ -3,9 +3,7 @@ package com.kenji.qlnv_backend.mapper;
 import com.kenji.qlnv_backend.dto.request.RoleRequest;
 import com.kenji.qlnv_backend.dto.response.RoleResponse;
 import com.kenji.qlnv_backend.entity.Role;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface RoleMapper {
@@ -14,6 +12,7 @@ public interface RoleMapper {
     @Mapping(target = "permissions", source = "permissions")
     RoleResponse toRoleResponse(Role role);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateRole(@MappingTarget Role role, RoleRequest request);
 
 }

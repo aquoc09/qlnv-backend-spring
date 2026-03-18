@@ -43,6 +43,15 @@ public class SalaryController {
                 .result(salaryService.get(id))
                 .build();
     }
+    @GetMapping("/employee/{empId}")
+    List<ApiResponse<SalaryResponse>> getAllByEmployee(@PathVariable Long empId) {
+        List<ApiResponse<SalaryResponse>> apiResponses = new ArrayList<>();
+        salaryService.findAllByEmployee(empId).forEach(salaryResponse -> apiResponses.add(
+                ApiResponse.<SalaryResponse>builder()
+                        .result(salaryResponse)
+                        .build()));
+        return apiResponses;
+    }
 
     @GetMapping("/employee/{empId}/calculate")
     ApiResponse<SalaryResponse> calculateSalaryByEmployee(@PathVariable Long empId) {

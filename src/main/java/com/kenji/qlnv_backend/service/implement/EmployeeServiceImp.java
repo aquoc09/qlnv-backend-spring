@@ -85,7 +85,7 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @PostAuthorize("returnObject.username == authentication.name")
-    public EmployeeResponse getMyInfo() {
+    public EmployeeResponse getCurrentEmployee() {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
@@ -96,7 +96,7 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponse> getEmployeeByName(String name) {
+    public List<EmployeeResponse> getAllEmployeesByName(String name) {
         List<Employee> employees = employeeRepository.findByEmpName(name);
         return employees.stream()
                 .map(employeeMapper::toEmployeeResponse)
@@ -104,7 +104,7 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponse> getEmployeeByDepartment(Long depId) {
+    public List<EmployeeResponse> getAllEmployeesByDepartment(Long depId) {
         Department dep = departmentRepository.findById(depId)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
         List<Employee> employees = employeeRepository.findByDepartment(dep);
