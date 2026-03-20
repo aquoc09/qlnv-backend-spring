@@ -18,3 +18,7 @@ jwt:
   signerKey: ${JWT_KEY}
   valid-duration: 3600 #seconds
   refreshable-duration: 12000 #seconds
+
+url:
+  fe_url: ${FE_URL}
+  fe_url_local: "http://localhost:5173"

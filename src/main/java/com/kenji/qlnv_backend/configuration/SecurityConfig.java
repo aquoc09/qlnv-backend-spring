@@ -32,6 +32,12 @@ public class SecurityConfig {
     @Value("${jwt.signerKey}")
     private String signerKey;
 
+    @Value("${url.fe_url}")
+    private String urlFE;
+
+    @Value("${url.fe_url_local}")
+    private String urlFeLocal;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -79,7 +85,8 @@ public class SecurityConfig {
     @Bean
     public CorsFilter corsFilter(){
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://qlnv-frontend-react-nine.vercel.app");
+        configuration.addAllowedOrigin(urlFE);
+        configuration.addAllowedOrigin(urlFeLocal);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         configuration.setAllowCredentials(true);
