@@ -9,7 +9,6 @@ import org.mapstruct.*;
 public interface RoleMapper {
     Role toRole(RoleRequest request);
 
-    @Mapping(target = "permissions", source = "permissions")
     RoleResponse toRoleResponse(Role role);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

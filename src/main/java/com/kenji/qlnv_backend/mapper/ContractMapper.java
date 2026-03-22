@@ -11,6 +11,7 @@ public interface ContractMapper {
     @Mapping(target = "employee", ignore = true)
     Contract toContract(ContractRequest request);
 
+    @Mapping(target = "employeeId", source = "employee.id")
     ContractResponse toContractResponse(Contract contract);
 
     @Mapping(target = "employee", ignore = true)

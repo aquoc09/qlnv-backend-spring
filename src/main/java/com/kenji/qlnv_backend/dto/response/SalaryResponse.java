@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class SalaryResponse {
     Long id;
-    EmployeeResponse employee;
+    Long employeeId;
     Integer month;
     Integer year;
     BigDecimal baseSalary;

@@ -11,6 +11,7 @@ public interface SalaryMapper {
     @Mapping(target = "employee", ignore = true)
     Salary toSalary(SalaryRequest request);
 
+    @Mapping(target = "employeeId", source = "employee.id")
     SalaryResponse toSalaryResponse(Salary salary);
 
     @Mapping(target = "employee", ignore = true)

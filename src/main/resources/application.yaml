@@ -16,8 +16,8 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
 jwt:
   signerKey: ${JWT_KEY}
-  valid-duration: 3600 #seconds
-  refreshable-duration: 12000 #seconds
+  valid-duration: 36000 #seconds
+  refreshable-duration: 120000 #seconds
 
 url:
   fe_url: ${FE_URL}

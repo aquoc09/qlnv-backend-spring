@@ -14,6 +14,7 @@ public interface DepartmentMapper {
     @Mapping(target = "employees", ignore = true)
     Department toDepartment(DepartmentRequest request);
 
+    @Mapping(target = "managerId", source = "manager.id")
     DepartmentResponse toDepartmentResponse(Department dep);
 
     @Mapping(target = "manager", ignore = true)

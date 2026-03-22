@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class RewardDisciplineResponse {
     Long id;
-    EmployeeResponse employee;
+    Long employeeId;
     RewardDisciplineType type;
     String reason;
     BigDecimal amount;

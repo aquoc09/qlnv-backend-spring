@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ContractResponse {
     Long id;
-    EmployeeResponse employee;
+    Long employeeId;
     String contractNumber;
     ContractType contractType;
     LocalDate startDate;

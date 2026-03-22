@@ -14,5 +14,5 @@ public class DepartmentResponse {
 
     String name;
 
-    Employee manager;
+    Long managerId;
 }

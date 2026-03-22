@@ -14,7 +14,7 @@ import java.time.LocalTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AttendanceResponse {
     Long id;
-    EmployeeResponse employee;
+    Long employeeId;
     LocalDate workDate;
     LocalTime checkIn;
     LocalTime checkOut;

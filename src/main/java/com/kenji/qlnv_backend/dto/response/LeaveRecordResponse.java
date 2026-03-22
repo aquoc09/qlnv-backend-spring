@@ -12,8 +12,8 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LeaveRecordResponse {
     Long id;
-    EmployeeResponse employee;
-    LeaveResponse leave;
+    Long employeeId;
+    Long leaveId;
     LocalDate startDate;
     LocalDate endDate;
     String reason;

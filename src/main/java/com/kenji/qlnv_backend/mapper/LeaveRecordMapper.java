@@ -12,6 +12,8 @@ public interface LeaveRecordMapper {
     @Mapping(target = "leave", ignore = true)
     LeaveRecord toLeaveRecord(LeaveRecordRequest request);
 
+    @Mapping(target = "employeeId", source = "employee.id")
+    @Mapping(target = "leaveId", source = "leave.id")
     LeaveRecordResponse toLeaveRecordResponse(LeaveRecord leaveRecord);
 
     @Mapping(target = "employee", ignore = true)

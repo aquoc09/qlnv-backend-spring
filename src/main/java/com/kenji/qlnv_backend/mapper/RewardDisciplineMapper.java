@@ -11,6 +11,7 @@ public interface RewardDisciplineMapper {
     @Mapping(target = "employee", ignore = true)
     RewardDiscipline toRewardDiscipline(RewardDisciplineRequest request);
 
+    @Mapping(target = "employeeId", source = "employee.id")
     RewardDisciplineResponse toRewardDisciplineResponse(RewardDiscipline rewardDiscipline);
 
     @Mapping(target = "employee", ignore = true)
