@@ -1,19 +1,9 @@
 package com.kenji.qlnv_backend.service.implement;
 
-import com.kenji.qlnv_backend.entity.Attendance;
-import com.kenji.qlnv_backend.entity.Contract;
-import com.kenji.qlnv_backend.entity.Department;
-import com.kenji.qlnv_backend.entity.Employee;
-import com.kenji.qlnv_backend.entity.LeaveRecord;
-import com.kenji.qlnv_backend.entity.Salary;
+import com.kenji.qlnv_backend.entity.*;
 import com.kenji.qlnv_backend.exception.AppException;
 import com.kenji.qlnv_backend.exception.ErrorCode;
-import com.kenji.qlnv_backend.repository.AttendanceRepository;
-import com.kenji.qlnv_backend.repository.ContractRepository;
-import com.kenji.qlnv_backend.repository.DepartmentRepository;
-import com.kenji.qlnv_backend.repository.EmployeeRepository;
-import com.kenji.qlnv_backend.repository.LeaveRecordRepository;
-import com.kenji.qlnv_backend.repository.SalaryRepository;
+import com.kenji.qlnv_backend.repository.*;
 import com.kenji.qlnv_backend.service.ReportService;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -47,6 +37,7 @@ public class ReportServiceImp implements ReportService {
     AttendanceRepository attendanceRepository;
     LeaveRecordRepository leaveRecordRepository;
     ContractRepository contractRepository;
+    RewardDisciplineRepository rewardDisciplineRepository;
 
     @Override
     public ByteArrayInputStream exportAllEmployeesToExcel() throws IOException {
@@ -377,6 +368,76 @@ public class ReportServiceImp implements ReportService {
         } catch (DocumentException e) {
             throw new IOException("Failed to export contract PDF", e);
         }
+
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    @Override
+    public ByteArrayInputStream exportRewardDisciplineByUser(Long empId) throws IOException {
+
+        Employee employee = employeeRepository.findById(empId)
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+
+        List<RewardDiscipline> rewardDisciplines =
+                rewardDisciplineRepository.findAllByEmployee(employee);
+
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Reward & Discipline");
+
+        // Header
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("ID");
+        header.createCell(1).setCellValue("Employee ID");
+        header.createCell(2).setCellValue("Employee Name");
+        header.createCell(3).setCellValue("Type");
+        header.createCell(4).setCellValue("Reason");
+        header.createCell(5).setCellValue("Amount");
+        header.createCell(6).setCellValue("Decision Date");
+
+        int rowIdx = 1;
+
+        for (RewardDiscipline rd : rewardDisciplines) {
+            Row row = sheet.createRow(rowIdx++);
+
+            row.createCell(0).setCellValue(rd.getId() != null ? rd.getId() : 0);
+
+            row.createCell(1).setCellValue(
+                    rd.getEmployee() != null && rd.getEmployee().getId() != null
+                            ? rd.getEmployee().getId()
+                            : 0
+            );
+
+            row.createCell(2).setCellValue(
+                    rd.getEmployee() != null && rd.getEmployee().getFullName() != null
+                            ? rd.getEmployee().getFullName()
+                            : ""
+            );
+
+            row.createCell(3).setCellValue(
+                    rd.getType() != null ? rd.getType().name() : ""
+            );
+
+            row.createCell(4).setCellValue(
+                    rd.getReason() != null ? rd.getReason() : ""
+            );
+
+            row.createCell(5).setCellValue(
+                    rd.getAmount() != null ? rd.getAmount().doubleValue() : 0
+            );
+
+            row.createCell(6).setCellValue(
+                    rd.getDecisionDate() != null ? rd.getDecisionDate().toString() : ""
+            );
+        }
+
+        // Auto size columns
+        for (int i = 0; i <= 6; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        workbook.write(out);
+        workbook.close();
 
         return new ByteArrayInputStream(out.toByteArray());
     }
