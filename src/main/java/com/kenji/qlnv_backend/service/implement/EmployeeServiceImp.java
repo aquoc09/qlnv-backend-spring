@@ -12,8 +12,11 @@ import com.kenji.qlnv_backend.service.EmployeeService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,44 +41,64 @@ public class EmployeeServiceImp implements EmployeeService {
     @Autowired
     EmployeeMapper employeeMapper;
 
-    public EmployeeResponse create(EmployeeRequest request) {
+    @NonFinal
+    @Value("${security.bcrypt-strength}")
+    int BCRYPT_STRENGTH;
 
-        Employee emp = employeeMapper.toEmployee(request);
-        User user;
+    final PasswordEncoder passwordEncoder;
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(BCRYPT_STRENGTH);
+    }
+
+    //Map thông tin của user
+    private User getOrCreateUser(EmployeeRequest request, Employee employee) {
         if (request.getUsername() != null && !request.getUsername().isBlank()) {
-            user = userRepository.findByUsername(request.getUsername())
+            return userRepository.findByUsername(request.getUsername())
                     .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
-        } else {
-            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
-            Set<Role> roles = new HashSet<>();
-            roles.add(roleRepository.findById(RoleEnum.EMPLOYEE.name())
-                    .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED)));
-
-            user = User.builder()
-                    .username(emp.getEmail())
-                    .password(passwordEncoder.encode(emp.getEmail()))
-                    .roles(roles)
-                    .build();
-        }
-        emp.setUser(userRepository.save(user));
-
-        if (request.getDepartmentId() != null) {
-            Department dep = departmentRepository.findById(request.getDepartmentId())
-                    .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
-            emp.setDepartment(dep);
         }
 
-        Employee empSave = employeeRepository.save(emp);
+        Set<Role> roles = new HashSet<>();
+        roles.add(roleRepository.findById(RoleEnum.EMPLOYEE.name())
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED)));
 
+        return User.builder()
+                .username(employee.getEmail())
+                .password(passwordEncoder.encode(employee.getEmail()))
+                .roles(roles)
+                .build();
+    }
+
+    //Tạo leaveBalance cho user hợp lệ
+    private void createLeaveBalance(Employee employee) {
         LeaveBalance leaveBalance = LeaveBalance.builder()
-                .employee(emp)
+                .employee(employee)
                 .usedDays(0)
                 .year(Calendar.getInstance().get(Calendar.YEAR))
                 .build();
-        leaveBalanceRepository.save(leaveBalance);
 
-        return employeeMapper.toEmployeeResponse(empSave);
+        leaveBalanceRepository.save(leaveBalance);
+    }
+
+    //Tạo employee mới từ request
+    public EmployeeResponse create(EmployeeRequest request) {
+        Employee employee = employeeMapper.toEmployee(request);
+
+        User user = getOrCreateUser(request, employee);
+        employee.setUser(userRepository.save(user));
+
+        if (request.getDepartmentId() != null) {
+            Department department = departmentRepository.findById(request.getDepartmentId())
+                    .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
+            employee.setDepartment(department);
+        }
+
+        Employee savedEmployee = employeeRepository.save(employee);
+
+        createLeaveBalance(savedEmployee);
+
+        return employeeMapper.toEmployeeResponse(savedEmployee);
     }
 
     public EmployeeResponse get(Long empId) {

@@ -26,4 +26,8 @@ public interface ReportService {
 
     @PreAuthorize("hasAnyRole('ADMIN','HR')")
     ByteArrayInputStream exportContractByEmployeeToPdf(Long empId) throws IOException;
+
+    @PreAuthorize("hasAnyRole('ADMIN','HR')")
+    ByteArrayInputStream exportRewardDisciplineByUser(Long empId) throws IOException;
+
 }

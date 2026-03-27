@@ -22,3 +22,6 @@ jwt:
 url:
   fe_url: ${FE_URL}
   fe_url_local: "http://localhost:5173"
+
+security:
+  bcrypt-strength: 10
