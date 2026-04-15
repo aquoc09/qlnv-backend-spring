@@ -28,6 +28,7 @@ public class LeaveBalance {
 
     int year;
 
+    @Builder.Default
     @Column(name = "total_days")
     int totalDays = 12;
 

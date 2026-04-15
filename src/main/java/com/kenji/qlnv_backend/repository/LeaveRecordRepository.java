@@ -4,6 +4,7 @@ import com.kenji.qlnv_backend.entity.Employee;
 import com.kenji.qlnv_backend.entity.LeaveRecord;
 import com.kenji.qlnv_backend.enums.LeaveStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -43,4 +44,8 @@ public interface LeaveRecordRepository extends JpaRepository<LeaveRecord, Long> 
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Modifying
+    @Query("DELETE FROM LeaveRecord lr WHERE lr.employee.id = :empId")
+    void deleteByEmployeeId(@Param("empId") Long empId);
 }

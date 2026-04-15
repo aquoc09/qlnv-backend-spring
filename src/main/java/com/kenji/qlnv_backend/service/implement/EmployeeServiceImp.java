@@ -23,7 +23,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.beans.Transient;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,13 +47,6 @@ public class EmployeeServiceImp implements EmployeeService {
     @Value("${security.bcrypt-strength}")
     int BCRYPT_STRENGTH;
 
-    final PasswordEncoder passwordEncoder;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(BCRYPT_STRENGTH);
-    }
-
     //Map thông tin của user
     private User getOrCreateUser(EmployeeRequest request, Employee employee) {
         if (request.getUsername() != null && !request.getUsername().isBlank()) {
@@ -62,6 +57,8 @@ public class EmployeeServiceImp implements EmployeeService {
         Set<Role> roles = new HashSet<>();
         roles.add(roleRepository.findById(RoleEnum.EMPLOYEE.name())
                 .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED)));
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(BCRYPT_STRENGTH);
 
         return User.builder()
                 .username(employee.getEmail())
@@ -144,9 +141,16 @@ public class EmployeeServiceImp implements EmployeeService {
         return employeeResponses;
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','HR')")
+    @Transactional
     public void delete(Long empId) {
-        employeeRepository.deleteById(empId);
+        Employee employee = employeeRepository.findById(empId)
+                        .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
+        boolean hasLeaveBalance = leaveBalanceRepository.findByEmployee(employee)
+                .isPresent();
+        if(hasLeaveBalance){
+            leaveBalanceRepository.deleteByEmployee(employee);
+        }
+        employeeRepository.delete(employee);
     }
 
     public EmployeeResponse update(Long empId, EmployeeRequest request) {
