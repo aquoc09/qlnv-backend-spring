@@ -27,4 +27,7 @@ public class User {
     @ManyToMany
     Set<Role> roles;
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    Employee employee;
+
 }

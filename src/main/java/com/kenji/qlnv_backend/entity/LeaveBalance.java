@@ -22,7 +22,7 @@ public class LeaveBalance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "employee_id")
     Employee employee;
 

@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -57,4 +58,25 @@ public class Employee {
     @OneToOne
     @JoinColumn(name = "user_id", unique = true)
     User user;
+
+    @OneToOne(mappedBy = "manager")
+    Department managedDepartment;
+
+    @OneToOne(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    Contract contract;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Attendance> attendances;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Salary> salaries;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<RewardDiscipline> rewardDisciplines;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<LeaveRecord> leaveRecords;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<LeaveBalance> leaveBalances;
 }

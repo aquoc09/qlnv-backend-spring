@@ -47,7 +47,7 @@ public class EmployeeServiceImp implements EmployeeService {
     @Value("${security.bcrypt-strength}")
     int BCRYPT_STRENGTH;
 
-    //Map thông tin của user
+    // Map thông tin của user
     private User getOrCreateUser(EmployeeRequest request, Employee employee) {
         if (request.getUsername() != null && !request.getUsername().isBlank()) {
             return userRepository.findByUsername(request.getUsername())
@@ -67,7 +67,7 @@ public class EmployeeServiceImp implements EmployeeService {
                 .build();
     }
 
-    //Tạo leaveBalance cho user hợp lệ
+    // Tạo leaveBalance cho user hợp lệ
     private void createLeaveBalance(Employee employee) {
         LeaveBalance leaveBalance = LeaveBalance.builder()
                 .employee(employee)
@@ -78,7 +78,7 @@ public class EmployeeServiceImp implements EmployeeService {
         leaveBalanceRepository.save(leaveBalance);
     }
 
-    //Tạo employee mới từ request
+    // Tạo employee mới từ request
     public EmployeeResponse create(EmployeeRequest request) {
         Employee employee = employeeMapper.toEmployee(request);
 
@@ -144,19 +144,13 @@ public class EmployeeServiceImp implements EmployeeService {
     @Transactional
     public void delete(Long empId) {
         Employee employee = employeeRepository.findById(empId)
-                        .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
-        boolean hasLeaveBalance = leaveBalanceRepository.findByEmployee(employee)
-                .isPresent();
-        if(hasLeaveBalance){
-            leaveBalanceRepository.deleteByEmployee(employee);
-        }
+                .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
         employeeRepository.delete(employee);
     }
 
     public EmployeeResponse update(Long empId, EmployeeRequest request) {
         Employee emp = employeeRepository.findById(empId)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
-
 
         if (request.getUsername() != null && !request.getUsername().isBlank()) {
             if (!Objects.equals(emp.getUser().getUsername(), request.getUsername())) {
