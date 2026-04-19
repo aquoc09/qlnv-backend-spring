@@ -1,27 +1,20 @@
+spring:
+  profiles:
+    # Mặc định khi chạy dưới máy sẽ dùng 'local'
+    # Khi deploy lên server bạn có thể set ENV SPRING_PROFILES_ACTIVE=prod
+    active: ${SPRING_PROFILES_ACTIVE:local}
+  jmx:
+    enabled: false # Tắt JMX Spring để tiết kiệm RAM
+
 server:
   port: ${PORT:8080}
   servlet:
     context-path: /qlnv-spring
 
-spring:
-  datasource:
-    url: ${DB_URL}
-    driver-class-name: "com.mysql.cj.jdbc.Driver"
-    username: ${DB_USER}
-    password: ${DB_PASS}
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-    database-platform: org.hibernate.dialect.MySQLDialect
 jwt:
   signerKey: ${JWT_KEY}
   valid-duration: 36000 #seconds
   refreshable-duration: 120000 #seconds
-
-url:
-  fe_url: ${FE_URL}
-  fe_url_local: "http://localhost:5173"
 
 security:
   bcrypt-strength: 10

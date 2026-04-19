@@ -1,0 +1,38 @@
+spring:
+  # Cấu hình lazy init giúp giảm RAM lúc boot, bean nào không dùng tới sẽ chưa được khởi tạo
+  main:
+    lazy-initialization: true 
+
+  datasource:
+    url: ${DB_URL}
+    driver-class-name: "com.mysql.cj.jdbc.Driver"
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    hikari:
+      # Giới hạn số connection giữ lại để giảm chiếm dụng RAM từ JDBC
+      maximum-pool-size: 10 
+      minimum-idle: 2
+
+  jpa:
+    hibernate:
+      ddl-auto: validate # Prod không nên tự tạo bảng, tiết kiệm tài nguyên kiểm tra cấu trúc
+    show-sql: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+    open-in-view: false # Tắt OSIV để giải phóng kết nối DB sớm hơn, giảm memory leak
+
+server:
+  tomcat:
+    threads:
+      # Giảm bớt số luồng xử lý xuống đủ để dùng (Default là 200). 
+      # Mỗi thread tốn ~1MB Ram. Giảm xuống 50 -> Tiết kiệm được ~150MB Ram.
+      max: 50 
+      min-spare: 5
+
+url:
+  fe_url: ${FE_URL}
+  fe_url_local: "http://localhost:5173"
+
+logging:
+  level:
+    root: WARN # Tắt bớt log INFO của framework để đỡ gây load CPU ghi file/console
+    com.kenji.qlnv_backend: INFO
