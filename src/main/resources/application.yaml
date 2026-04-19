@@ -4,20 +4,43 @@ server:
     context-path: /qlnv-spring
 
 spring:
+  main:
+    lazy-initialization: true
+  profiles:
+    active: prod
+
   datasource:
     url: ${DB_URL}
-    driver-class-name: "com.mysql.cj.jdbc.Driver"
+    driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${DB_USER}
     password: ${DB_PASS}
+
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 1
+      idle-timeout: 30000
+      max-lifetime: 600000
+      connection-timeout: 30000
+
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
-    database-platform: org.hibernate.dialect.MySQLDialect
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: OFF
+    org.hibernate.type.descriptor.sql: OFF
+
 jwt:
   signerKey: ${JWT_KEY}
-  valid-duration: 36000 #seconds
-  refreshable-duration: 120000 #seconds
+  valid-duration: 36000
+  refreshable-duration: 120000
 
 url:
   fe_url: ${FE_URL}
