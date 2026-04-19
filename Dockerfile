@@ -21,4 +21,8 @@ COPY --from=build /app/target/*.jar app.jar
 
 EXPOSE 8080
 
+# Mặc định sử dụng profile prod khi deploy container. 
+# Bạn có thể override bằng docker run -e SPRING_PROFILES_ACTIVE=local tên-image
+ENV SPRING_PROFILES_ACTIVE=prod
+
 CMD ["java", "-jar", "app.jar"]
