@@ -15,7 +15,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: validate # Prod không nên tự tạo bảng, tiết kiệm tài nguyên kiểm tra cấu trúc
+      ddl-auto: update # Prod không nên tự tạo bảng, tiết kiệm tài nguyên kiểm tra cấu trúc
     show-sql: false
     database-platform: org.hibernate.dialect.MySQLDialect
     open-in-view: false # Tắt OSIV để giải phóng kết nối DB sớm hơn, giảm memory leak
