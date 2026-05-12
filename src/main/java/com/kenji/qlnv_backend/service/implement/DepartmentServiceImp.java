@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,7 @@ public class DepartmentServiceImp implements DepartmentService {
     @Autowired
     DepartmentMapper departmentMapper;
 
+    @Transactional
     public DepartmentResponse create(DepartmentRequest request){
         Department dep = departmentMapper.toDepartment(request);
 
@@ -52,6 +54,7 @@ public class DepartmentServiceImp implements DepartmentService {
         return departmentMapper.toDepartmentResponse(departmentRepository.save(dep));
     }
 
+    @Transactional(readOnly = true)
     public DepartmentResponse get(Long depId){
         Department dep = departmentRepository.findById(depId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -59,6 +62,7 @@ public class DepartmentServiceImp implements DepartmentService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','HR')")
+    @Transactional(readOnly = true)
     public List<DepartmentResponse> getAll(){
         List<DepartmentResponse> departmentResponses = new ArrayList<>();
         departmentRepository.findAll()
@@ -71,6 +75,7 @@ public class DepartmentServiceImp implements DepartmentService {
         departmentRepository.deleteById(empId);
     }
 
+    @Transactional
     public DepartmentResponse update(Long depId, DepartmentRequest request){
         Department dep = departmentRepository.findById(depId)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));

@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,6 +41,7 @@ public class ReportServiceImp implements ReportService {
     RewardDisciplineRepository rewardDisciplineRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public ByteArrayInputStream exportAllEmployeesToExcel() throws IOException {
         List<Employee> employees = employeeRepository.findAll();
         Workbook workbook = new XSSFWorkbook();
@@ -80,6 +82,7 @@ public class ReportServiceImp implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ByteArrayInputStream exportAllDepartmentsToExcel() throws IOException {
         List<Department> departments = departmentRepository.findAll();
         Workbook workbook = new XSSFWorkbook();
@@ -114,6 +117,7 @@ public class ReportServiceImp implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ByteArrayInputStream exportEmployeesByDepartmentToExcel(Long depId) throws IOException {
         Department department = departmentRepository.findById(depId)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
@@ -157,6 +161,7 @@ public class ReportServiceImp implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ByteArrayInputStream exportSalaryByYearMonthToExcel(int month, int year) throws IOException {
         List<Salary> salaries = salaryRepository.findAllByMonthAndYear(month, year);
 
@@ -210,6 +215,7 @@ public class ReportServiceImp implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ByteArrayInputStream exportAttendanceByYearMonthToExcel(int month, int year) throws IOException {
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDate startDate = yearMonth.atDay(1);
@@ -261,6 +267,7 @@ public class ReportServiceImp implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ByteArrayInputStream exportLeaveRecordByYearMonthToExcel(int month, int year) throws IOException {
         YearMonth yearMonth = YearMonth.of(year, month);
         LocalDate startDate = yearMonth.atDay(1);
@@ -308,6 +315,7 @@ public class ReportServiceImp implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ByteArrayInputStream exportContractByEmployeeToPdf(Long empId) throws IOException {
         Employee employee = employeeRepository.findById(empId)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
@@ -373,6 +381,7 @@ public class ReportServiceImp implements ReportService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ByteArrayInputStream exportRewardDisciplineByUser(Long empId) throws IOException {
 
         Employee employee = employeeRepository.findById(empId)

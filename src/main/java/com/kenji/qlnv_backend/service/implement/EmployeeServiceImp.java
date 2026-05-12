@@ -79,6 +79,7 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     // Tạo employee mới từ request
+    @Transactional
     public EmployeeResponse create(EmployeeRequest request) {
         Employee employee = employeeMapper.toEmployee(request);
 
@@ -98,6 +99,7 @@ public class EmployeeServiceImp implements EmployeeService {
         return employeeMapper.toEmployeeResponse(savedEmployee);
     }
 
+    @Transactional(readOnly = true)
     public EmployeeResponse get(Long empId) {
         Employee emp = employeeRepository.findById(empId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
@@ -105,6 +107,7 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @PostAuthorize("returnObject.username == authentication.name")
+    @Transactional(readOnly = true)
     public EmployeeResponse getCurrentEmployee() {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
@@ -116,6 +119,7 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EmployeeResponse> getAllEmployeesByName(String name) {
         List<Employee> employees = employeeRepository.findByEmpName(name);
         return employees.stream()
@@ -124,6 +128,7 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EmployeeResponse> getAllEmployeesByDepartment(Long depId) {
         Department dep = departmentRepository.findById(depId)
                 .orElseThrow(() -> new AppException(ErrorCode.DEPARTMENT_NOT_EXISTED));
@@ -134,6 +139,7 @@ public class EmployeeServiceImp implements EmployeeService {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','HR')")
+    @Transactional(readOnly = true)
     public List<EmployeeResponse> getAll() {
         List<EmployeeResponse> employeeResponses = new ArrayList<>();
         employeeRepository.findAll()
@@ -148,6 +154,7 @@ public class EmployeeServiceImp implements EmployeeService {
         employeeRepository.delete(employee);
     }
 
+    @Transactional
     public EmployeeResponse update(Long empId, EmployeeRequest request) {
         Employee emp = employeeRepository.findById(empId)
                 .orElseThrow(() -> new AppException(ErrorCode.EMPLOYEE_NOT_EXISTED));
