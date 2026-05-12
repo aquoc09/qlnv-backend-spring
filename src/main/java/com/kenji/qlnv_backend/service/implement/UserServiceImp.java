@@ -22,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -68,9 +69,12 @@ public class UserServiceImp implements UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @Transactional(readOnly = true)
     public UserResponse get(Long userId){
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        // Khởi tạo roles trong session để tránh LazyInitializationException
+        user.getRoles().size();
         return userMapper.toUserResponse(user);
     }
 
@@ -79,15 +83,22 @@ public class UserServiceImp implements UserService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
-        User user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        // Dùng findByUsernameWithRoles để fetch roles trong cùng một query
+        User user = userRepository.findByUsernameWithRoles(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         return userMapper.toUserResponse(user);
     }
 
     //@PreAuthorize("hasAnyRole('ADMIN','HR')")
+    @Transactional(readOnly = true)
     public List<UserResponse> getAll(){
         List<UserResponse> userResponses = new ArrayList<>();
-        userRepository.findAll().forEach(user -> userResponses.add(userMapper.toUserResponse(user)));
+        // Session vẫn mở (Transactional) nên LAZY load roles sẽ hoạt động
+        userRepository.findAll().forEach(user -> {
+            user.getRoles().size(); // khởi tạo collection
+            userResponses.add(userMapper.toUserResponse(user));
+        });
         return userResponses;
     }
 
@@ -95,14 +106,19 @@ public class UserServiceImp implements UserService {
         userRepository.deleteById(userId);
     }
 
+    @Transactional
     public UserResponse update(Long userId, UserUpdateRequest request){
+        // Fetch user cùng roles để tránh LazyInitializationException khi mapper truy cập roles
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        user.getRoles().size(); // khởi tạo roles trong session hiện tại
 
         userMapper.updateUser(user, request);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        return userMapper.toUserResponse(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+        savedUser.getRoles().size(); // đảm bảo roles được load trước khi return
+        return userMapper.toUserResponse(savedUser);
 
     }
 

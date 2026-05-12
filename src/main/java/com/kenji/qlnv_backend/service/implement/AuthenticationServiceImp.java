@@ -221,7 +221,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
         var jwtId = signedJWT.getJWTClaimsSet().getJWTID();
 
         var username = signedJWT.getJWTClaimsSet().getSubject();
-        var user = userRepository.findByUsername(username)
+        // Dùng findByUsernameWithRoles vì generateToken() sẽ gọi buildScope() -> getRoles()
+        var user = userRepository.findByUsernameWithRoles(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         if(refreshableTime.before(new Date())){
@@ -246,7 +247,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
-        return userRepository.findByUsername(name)
+        // Dùng findByUsernameWithRoles phòng trường hợp caller dùng getRoles()
+        return userRepository.findByUsernameWithRoles(name)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
 
